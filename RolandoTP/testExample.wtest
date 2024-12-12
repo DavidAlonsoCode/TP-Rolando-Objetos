@@ -1,0 +1,237 @@
+import example.*
+
+//modifico (para la entrega 2)
+describe "Hechiceria recargada" { 
+
+  const rolando = new Personaje(hechizoPreferido=espectroMalefico,hechizos = [],artefactos = #{})
+  
+  test "Conocer el nivel de hechicería de Rolando" {
+    assert.equals(56,rolando.nivelHechiceria())
+  }
+  test "Cambiar el nombre del espectro maléfico a -espectro superrecontramalefico muajajaja-.
+        Conocer el nivel de hechicería de Rolando" {
+    espectroMalefico.nombre("espectro superrecontramalefico muajajaja")
+    assert.equals(125,rolando.nivelHechiceria())
+  }
+  test "Cambiar el hechizo preferido de Rolando para que sea el hechizo básico.
+        Conocer el nivel de hechicería de Rolando." {
+    rolando.hechizoPreferido(hechizoBasico)
+    assert.equals(35,rolando.nivelHechiceria())
+  }
+  test "Hacer que ocurra un eclipse.
+Conocer el nivel de hechicería de Rolando." {
+    eclipse.eclipsar()
+    assert.equals(61,rolando.nivelHechiceria())
+  }
+  test "Saber si el espectro maléfico es poderoso." {
+    assert.equals(true,espectroMalefico.esPoderoso())
+  }
+  test "Cambiar el nombre del espectro maléfico a -pepe-.
+    Saber si el espectro maléfico es poderoso." {
+    espectroMalefico.nombre("pepe")
+    assert.equals(false,espectroMalefico.esPoderoso())
+  }
+  test "Saber si el hechizo básico es poderoso." {
+    assert.equals(false,hechizoBasico.esPoderoso())
+  }
+
+}
+
+describe "Lucha reformulada" {
+  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1)
+  const rolando = new Personaje(hechizoPreferido=espectroMalefico,hechizos = [],artefactos = #{espadaDelDestino,collarDivino,mascaraOscura})
+  test "Eliminar todos los artefactos de Rolando.
+        Conocer la habilidad para la lucha de Rolando." {
+    rolando.removerArtefacto(espadaDelDestino)
+    rolando.removerArtefacto(collarDivino)
+    rolando.removerArtefacto(mascaraOscura)
+    assert.equals(1,rolando.habilidadLucha())
+  }
+  test "Conocer la habilidad para la lucha de Rolando con todos los artefactos." {
+    assert.equals(13,rolando.habilidadLucha())
+  }
+  test "Cambiar la cantidad de perlas del collar divino a 3.
+      Conocer la habilidad para la lucha de Rolando con todos los artefactos." {
+    collarDivino.perlas(3)
+    assert.equals(11,rolando.habilidadLucha())
+  }
+  test "Cambiar el valor base para la lucha de Rolando a 8.
+      Conocer la habilidad para la lucha de Rolando con todos los artefactos." {
+    rolando.valorBaseLucha(8)
+    assert.equals(20,rolando.habilidadLucha())
+  }
+  test "Hacer que ocurra un eclipse. Preguntar por el valor de lucha de la máscara oscura." {
+    eclipse.eclipsar()
+    assert.equals(5,mascaraOscura.unidadesDeLucha(rolando))
+  }
+  test "Eliminar la máscara oscura de los artefactos de Rolando. 
+        Conocer la habilidad para la lucha de Rolando." {
+    rolando.removerArtefacto(mascaraOscura)
+    assert.equals(9,rolando.habilidadLucha())
+  }
+  test "Tener una máscara (para nada) oscura con índice de oscuridad = 0. Preguntar por el valor de lucha de la máscara oscura de Rolando."{
+    const mascaraOscura2 = new MascaraOscura(indiceOscuridad = 0)
+    assert.equals(4,mascaraOscura2.unidadesDeLucha(rolando))
+  }
+  test "Tener una máscara (para nada) oscura con índice de oscuridad = 0, y valor mínimo en 2. Preguntar por el valor de lucha de la máscara oscura de Rolando."{
+    const mascaraOscura3 = new MascaraOscura(indiceOscuridad = 0,poderMinimo=2)
+    assert.equals(2,mascaraOscura3.unidadesDeLucha(rolando))
+  }
+
+}
+
+describe "Lucha más avanzada aún" {
+  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1)
+  const armadura = new Armadura(refuerzo = ningunRefuerzo,valorBase=2)
+  const rolando = new Personaje(hechizoPreferido = espectroMalefico , hechizos = [],
+                artefactos = #{espadaDelDestino,collarDivino,mascaraOscura,armadura,espejoFantastico})
+   
+  test "Saber si Rolando está cargado" {
+    assert.equals(true,rolando.estaCargado())
+  }
+  test "Hacer que Rolando se saque la armadura.
+        Saber si Rolando está cargado." {
+    rolando.removerArtefacto(armadura)
+    assert.equals(false,rolando.estaCargado())
+  }
+  test "Saber cuánta habilidad para la lucha tiene Rolando." {
+    assert.equals(20,rolando.habilidadLucha())
+  }
+  test "Saber cuál es la habilidad para la lucha de la armadura
+       de Rolando si tiene una bendición de refuerzo " {
+    armadura.refuerzo(bendicion)
+    assert.equals(58,armadura.unidadesDeLucha(rolando))
+  }
+  test "Saber cuál es la habilidad para la lucha de la armadura de Rolando si tiene una cota de malla de refuerzo" {
+    const cotaDeMalla = new CotaDeMalla() 
+    armadura.refuerzo(cotaDeMalla)
+    assert.equals(3,armadura.unidadesDeLucha(rolando))
+  }
+  test "Saber cuál es la habilidad para la lucha de la armadura de Rolando
+        si tiene el hechizo básico de refuerzo" {
+    const hechizo = new Hechizo( tipo = hechizoBasico )
+    armadura.refuerzo(hechizo)
+    assert.equals(12,armadura.unidadesDeLucha(rolando))
+  }
+  test "Saber cuál es la habilidad para la lucha de la armadura de Rolando
+        si  tiene el hechizo espectro maléfico de refuerzo" {
+    const hechizo = new Hechizo( tipo = espectroMalefico )
+    armadura.refuerzo(hechizo)
+    assert.equals(19,armadura.unidadesDeLucha(rolando))
+  }
+  test "Eliminar todos los artefactos de Rolando.
+        Incorporar solamente el espejo.
+        Saber cuál es la habilidad para la lucha de Rolando." {
+    rolando.removerArtefacto(espadaDelDestino)
+    rolando.removerArtefacto(collarDivino)
+    rolando.removerArtefacto(mascaraOscura)
+    rolando.removerArtefacto(armadura)
+    assert.equals(1,rolando.habilidadLucha())
+  }
+  test "Reemplazar al hechizo preferido por un libro de hechizos que 
+        contenga  el espectro maléfico
+        (con nombre “espectro maléfico”) y al hechizo básico.
+        Saber cuál es el nivel de hechicería de Rolando." {
+    const libroDeHechizos = new LibroDeHechizos( hechizos = #{espectroMalefico,hechizoBasico} )
+    rolando.hechizoPreferido(libroDeHechizos)
+    assert.equals(56,rolando.nivelHechiceria())
+  }
+  test "Agregarle a Rolando una armadura extra, cuyo valor base es 5, con un refuerzo de cota de malla que tiene un valor de lucha 6.
+      Saber cuál es la habilidad para la lucha de Rolando." {
+    const cotaDeMalla1 = new CotaDeMalla( unidadesDeLucha = 6)
+    const armaduraExtra = new Armadura( refuerzo = cotaDeMalla1,valorBase = 5)
+    rolando.agregarArtefacto(armaduraExtra)
+    assert.equals(37,rolando.habilidadLucha())
+  }
+
+}
+
+describe "Comercio" {
+  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1)
+  const armadura = new Armadura(refuerzo = ningunRefuerzo,valorBase=2)
+  const rolando = new Personaje(hechizoPreferido = espectroMalefico , hechizos = [],
+                artefactos = #{espadaDelDestino,collarDivino,mascaraOscura,armadura,espejoFantastico})
+
+  const alacachulaCachicomula = new HechizoLogos(nombre = "alacachula cachicomula",factor=1)
+  const xenia = new Personaje(hechizoPreferido = alacachulaCachicomula , hechizos = [], artefactos = #{})
+  const thor = new Personaje(hechizoPreferido = hechizoBasico , hechizos = [], artefactos = #{})
+  const loki = new Personaje(monedas = 5, hechizoPreferido = hechizoBasico , hechizos = [], artefactos = #{})
+   
+  test "Indicar que Rolando cumplió un objetivo. Saber cuántas monedas le quedan." {
+    assert.equals(true,rolando.cumplirObjetivo())
+    assert.equals(110,rolando.monedas())
+  }
+  test "Conocer el precio de lista de un hechizo de logo cuyo nombre es “alacachula cachicomula”." {
+    assert.equals(22,alacachulaCachicomula.precio(xenia))
+  }
+  test "Xenia canjea el hechizo por un hechizo básico. Saber cuántas monedas le quedan." {
+    xenia.canjearHechizoPreferidoPor(hechizoBasico)
+    assert.equals(100,xenia.monedas())
+  }
+  test "Thor canjea el hechizo por el hechizo de logos “alacachula cachicomula” del juego de datos. Cuántas monedas le quedan a Thor." {
+    thor.canjearHechizoPreferidoPor(alacachulaCachicomula)
+    assert.equals(83,thor.monedas())
+  }
+  test "Hacer canjear dos veces a Thor el mismo hechizo básico." {
+    thor.canjearHechizoPreferidoPor(hechizoBasico)
+    thor.canjearHechizoPreferidoPor(hechizoBasico)
+    assert.equals(90,thor.monedas())
+  }
+  test "Loki comienza con 5 monedas. Quiere canjear el hechizo por el de “alacachula cachicomula” del juego de datos." {
+    assert.throwsExceptionLike(new Exception(message = "No se puede costear Hechizo"), { loki.canjearHechizoPreferidoPor(alacachulaCachicomula) } )
+  }
+  test "Xenia compra una espada, un collar divino (de 5 perlas), una armadura sin 
+  refuerzo y otra armadura con malla de cota cuyo valor de lucha es 5. Cuántas monedas le quedan a Xenia." {
+    const espada = new Arma()
+    const armaduraSinRef = new Armadura(refuerzo = ningunRefuerzo)
+    const cotaDeMalla5U = new CotaDeMalla(unidadesDeLucha = 5)
+    const armaduraConMallaCota = new Armadura(refuerzo = cotaDeMalla5U)
+    xenia.comprarArtefacto(espada)
+    xenia.comprarArtefacto(collarDivino)
+    xenia.comprarArtefacto(armaduraSinRef)
+    xenia.comprarArtefacto(armaduraConMallaCota)
+    assert.equals(70.5,xenia.monedas())
+  }
+  test "Xenia compra una espada, un collar divino (de 5 perlas), una armadura sin refuerzo y otra
+   armadura con malla de cota cuyo valor de lucha es 5. Cuántos artefactos tiene Xenia." {
+    const espada = new Arma()
+    const armaduraSinRef = new Armadura(refuerzo = ningunRefuerzo)
+    const cotaDeMalla5U = new CotaDeMalla(unidadesDeLucha = 5)
+    const armaduraConMallaCota = new Armadura(refuerzo = cotaDeMalla5U)
+    xenia.comprarArtefacto(espada)
+    xenia.comprarArtefacto(collarDivino)
+    xenia.comprarArtefacto(armaduraSinRef)
+    xenia.comprarArtefacto(armaduraConMallaCota)
+    assert.equals(4,xenia.artefactos().size())
+  }
+  test "Thor compra una armadura (de valor base 2) con bendición como refuerzo, y una armadura (también con
+   valor base 2) reforzada con el hechizo alacachula (del juego de datos). Cuántas monedas le quedan a Thor." {
+    const armaduraConBendi = new Armadura(refuerzo = bendicion)
+    const armaduraSinRef = new Armadura(refuerzo = ningunRefuerzo)
+    const armaduraConAlacachula = new Armadura(refuerzo = alacachulaCachicomula)
+    thor.comprarArtefacto(armaduraConBendi)
+    thor.comprarArtefacto(armaduraSinRef)
+    thor.comprarArtefacto(armaduraConAlacachula)
+    assert.equals(74,thor.monedas())
+  }
+  test "Loki quiere comprar el espejo." {
+    assert.throwsExceptionLike(new Exception(message = "No se puede costear Artefacto"), { loki.comprarArtefacto(espejoFantastico) } )
+  }
+  test "Xenia canjea un libro de hechizos que contiene el hechizo de logos de nombre “alacachula 
+  cachicomula” y el hechizo básico. Cuántas monedas le quedan a Xenia." {
+    const librito = new LibroDeHechizos( hechizos = [alacachulaCachicomula,hechizoBasico])
+    xenia.canjearHechizoPreferidoPor(librito)
+    assert.equals(69,xenia.monedas())
+  }
+  test "Thor compra una máscara de índice de oscuridad 1. Saber cuántas monedas le quedan" {
+    thor.comprarArtefacto(mascaraOscura)
+    assert.equals(25,thor.monedas())
+  }
+  test "Ocurre un eclipse. Xenia compra una máscara de índice de oscuridad 0.5. Saber cuántas monedas le quedan." {
+    eclipse.eclipsar()
+    const mascaraOscuraMedio = new MascaraOscura( indiceOscuridad = 0.5)
+    xenia.comprarArtefacto(mascaraOscuraMedio)
+    assert.equals(25,xenia.monedas())
+  }
+
+}
