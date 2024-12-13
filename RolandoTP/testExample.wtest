@@ -3,7 +3,7 @@ import example.*
 //modifico (para la entrega 2)
 describe "Hechiceria recargada" { 
 
-  const rolando = new Personaje(hechizoPreferido=espectroMalefico,hechizos = [],artefactos = #{})
+  const rolando = new Personaje(hechizoPreferido=espectroMalefico,artefactos = #{},capacidadDeCarga=200)
   
   test "Conocer el nivel de hechicería de Rolando" {
     assert.equals(56,rolando.nivelHechiceria())
@@ -38,11 +38,13 @@ Conocer el nivel de hechicería de Rolando." {
 }
 
 describe "Lucha reformulada" {
-  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1)
-  const rolando = new Personaje(hechizoPreferido=espectroMalefico,hechizos = [],artefactos = #{espadaDelDestino,collarDivino,mascaraOscura})
+  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1,peso=0,fechaCompra=new Date())
+  const espada = new Arma(peso=0,fechaCompra=new Date())
+  const collarDivino = new CollarDivino(peso=0,fechaCompra = new Date())
+  const rolando = new Personaje(hechizoPreferido=espectroMalefico,artefactos = #{espada,collarDivino,mascaraOscura},capacidadDeCarga=200)
   test "Eliminar todos los artefactos de Rolando.
         Conocer la habilidad para la lucha de Rolando." {
-    rolando.removerArtefacto(espadaDelDestino)
+    rolando.removerArtefacto(espada)
     rolando.removerArtefacto(collarDivino)
     rolando.removerArtefacto(mascaraOscura)
     assert.equals(1,rolando.habilidadLucha())
@@ -70,21 +72,23 @@ describe "Lucha reformulada" {
     assert.equals(9,rolando.habilidadLucha())
   }
   test "Tener una máscara (para nada) oscura con índice de oscuridad = 0. Preguntar por el valor de lucha de la máscara oscura de Rolando."{
-    const mascaraOscura2 = new MascaraOscura(indiceOscuridad = 0)
+    const mascaraOscura2 = new MascaraOscura(indiceOscuridad = 0,peso=0,fechaCompra=new Date())
     assert.equals(4,mascaraOscura2.unidadesDeLucha(rolando))
   }
   test "Tener una máscara (para nada) oscura con índice de oscuridad = 0, y valor mínimo en 2. Preguntar por el valor de lucha de la máscara oscura de Rolando."{
-    const mascaraOscura3 = new MascaraOscura(indiceOscuridad = 0,poderMinimo=2)
+    const mascaraOscura3 = new MascaraOscura(indiceOscuridad = 0,poderMinimo=2,peso=0,fechaCompra=new Date())
     assert.equals(2,mascaraOscura3.unidadesDeLucha(rolando))
   }
 
 }
 
 describe "Lucha más avanzada aún" {
-  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1)
-  const armadura = new Armadura(refuerzo = ningunRefuerzo,valorBase=2)
-  const rolando = new Personaje(hechizoPreferido = espectroMalefico , hechizos = [],
-                artefactos = #{espadaDelDestino,collarDivino,mascaraOscura,armadura,espejoFantastico})
+  const mascaraOscura = new MascaraOscura(indiceOscuridad = 1,peso=0,fechaCompra=new Date())
+  const armadura = new Armadura(refuerzo = ningunRefuerzo,valorBase=2,peso=0,fechaCompra=new Date())
+  const espada = new Arma(peso=0,fechaCompra=new Date())
+  const collarDivino = new CollarDivino(peso=0,fechaCompra = new Date())
+  const rolando = new Personaje(hechizoPreferido = espectroMalefico,
+                artefactos = #{espada,collarDivino,mascaraOscura,armadura,espejoFantastico},capacidadDeCarga=200)
    
   test "Saber si Rolando está cargado" {
     assert.equals(true,rolando.estaCargado())
@@ -122,7 +126,7 @@ describe "Lucha más avanzada aún" {
   test "Eliminar todos los artefactos de Rolando.
         Incorporar solamente el espejo.
         Saber cuál es la habilidad para la lucha de Rolando." {
-    rolando.removerArtefacto(espadaDelDestino)
+    rolando.removerArtefacto(espada)
     rolando.removerArtefacto(collarDivino)
     rolando.removerArtefacto(mascaraOscura)
     rolando.removerArtefacto(armadura)
@@ -139,7 +143,7 @@ describe "Lucha más avanzada aún" {
   test "Agregarle a Rolando una armadura extra, cuyo valor base es 5, con un refuerzo de cota de malla que tiene un valor de lucha 6.
       Saber cuál es la habilidad para la lucha de Rolando." {
     const cotaDeMalla1 = new CotaDeMalla( unidadesDeLucha = 6)
-    const armaduraExtra = new Armadura( refuerzo = cotaDeMalla1,valorBase = 5)
+    const armaduraExtra = new Armadura( refuerzo = cotaDeMalla1,valorBase = 5,peso=0,fechaCompra=new Date())
     rolando.agregarArtefacto(armaduraExtra)
     assert.equals(37,rolando.habilidadLucha())
   }
@@ -149,13 +153,17 @@ describe "Lucha más avanzada aún" {
 describe "Comercio" {
   const mascaraOscura = new MascaraOscura(indiceOscuridad = 1)
   const armadura = new Armadura(refuerzo = ningunRefuerzo,valorBase=2)
-  const rolando = new Personaje(hechizoPreferido = espectroMalefico , hechizos = [],
-                artefactos = #{espadaDelDestino,collarDivino,mascaraOscura,armadura,espejoFantastico})
+  const espada = new Arma()
+  const collarDivino = new CollarDivino()
+  const rolando = new Personaje(hechizoPreferido = espectroMalefico,
+                artefactos = #{espada,collarDivino,mascaraOscura,armadura,espejoFantastico})
 
   const alacachulaCachicomula = new HechizoLogos(nombre = "alacachula cachicomula",factor=1)
-  const xenia = new Personaje(hechizoPreferido = alacachulaCachicomula , hechizos = [], artefactos = #{})
-  const thor = new Personaje(hechizoPreferido = hechizoBasico , hechizos = [], artefactos = #{})
-  const loki = new Personaje(monedas = 5, hechizoPreferido = hechizoBasico , hechizos = [], artefactos = #{})
+  const xenia = new Personaje(hechizoPreferido = alacachulaCachicomula , artefactos = #{})
+  const thor = new Personaje(hechizoPreferido = hechizoBasico , artefactos = #{})
+  const loki = new Personaje(monedas = 5, hechizoPreferido = hechizoBasico , artefactos = #{})
+  const comercianteIndep = new ComercianteIndependiente(comision=0)
+  const mockHnos = new Comerciante(tipo=comercianteIndep)
    
   test "Indicar que Rolando cumplió un objetivo. Saber cuántas monedas le quedan." {
     assert.equals(true,rolando.cumplirObjetivo())
@@ -180,28 +188,26 @@ describe "Comercio" {
   test "Loki comienza con 5 monedas. Quiere canjear el hechizo por el de “alacachula cachicomula” del juego de datos." {
     assert.throwsExceptionLike(new Exception(message = "No se puede costear Hechizo"), { loki.canjearHechizoPreferidoPor(alacachulaCachicomula) } )
   }
-  test "Xenia compra una espada, un collar divino (de 5 perlas), una armadura sin 
+  test "Xenia compra a Mock Hnos una espada, un collar divino (de 5 perlas), una armadura sin 
   refuerzo y otra armadura con malla de cota cuyo valor de lucha es 5. Cuántas monedas le quedan a Xenia." {
-    const espada = new Arma()
     const armaduraSinRef = new Armadura(refuerzo = ningunRefuerzo)
     const cotaDeMalla5U = new CotaDeMalla(unidadesDeLucha = 5)
     const armaduraConMallaCota = new Armadura(refuerzo = cotaDeMalla5U)
-    xenia.comprarArtefacto(espada)
-    xenia.comprarArtefacto(collarDivino)
-    xenia.comprarArtefacto(armaduraSinRef)
-    xenia.comprarArtefacto(armaduraConMallaCota)
-    assert.equals(70.5,xenia.monedas())
+    xenia.comprarArtefactoAComerciante(mockHnos,espada)
+    xenia.comprarArtefactoAComerciante(mockHnos,collarDivino)
+    xenia.comprarArtefactoAComerciante(mockHnos,armaduraSinRef)
+    xenia.comprarArtefactoAComerciante(mockHnos,armaduraConMallaCota)
+    assert.equals(85.5,xenia.monedas())
   }
-  test "Xenia compra una espada, un collar divino (de 5 perlas), una armadura sin refuerzo y otra
+  test "Xenia compra a Mock Hnos una espada, un collar divino (de 5 perlas), una armadura sin refuerzo y otra
    armadura con malla de cota cuyo valor de lucha es 5. Cuántos artefactos tiene Xenia." {
-    const espada = new Arma()
     const armaduraSinRef = new Armadura(refuerzo = ningunRefuerzo)
     const cotaDeMalla5U = new CotaDeMalla(unidadesDeLucha = 5)
     const armaduraConMallaCota = new Armadura(refuerzo = cotaDeMalla5U)
-    xenia.comprarArtefacto(espada)
-    xenia.comprarArtefacto(collarDivino)
-    xenia.comprarArtefacto(armaduraSinRef)
-    xenia.comprarArtefacto(armaduraConMallaCota)
+    xenia.comprarArtefactoAComerciante(mockHnos,espada)
+    xenia.comprarArtefactoAComerciante(mockHnos,collarDivino)
+    xenia.comprarArtefactoAComerciante(mockHnos,armaduraSinRef)
+    xenia.comprarArtefactoAComerciante(mockHnos,armaduraConMallaCota)
     assert.equals(4,xenia.artefactos().size())
   }
   test "Thor compra una armadura (de valor base 2) con bendición como refuerzo, y una armadura (también con
@@ -223,6 +229,7 @@ describe "Comercio" {
     xenia.canjearHechizoPreferidoPor(librito)
     assert.equals(69,xenia.monedas())
   }
+  /* Estos tests cambian porque la mascara Oscura cambia
   test "Thor compra una máscara de índice de oscuridad 1. Saber cuántas monedas le quedan" {
     thor.comprarArtefacto(mascaraOscura)
     assert.equals(25,thor.monedas())
@@ -232,6 +239,147 @@ describe "Comercio" {
     const mascaraOscuraMedio = new MascaraOscura( indiceOscuridad = 0.5)
     xenia.comprarArtefacto(mascaraOscuraMedio)
     assert.equals(25,xenia.monedas())
+  }*/
+
+}
+/////////////////////////////////////////////// ENTREGA 3 ///////////////////////////////////////////////
+describe "Hechiceria" {
+  const furibunda = new Personaje(hechizoPreferido=hechizoComercial,artefactos=#{})
+   
+  test "Saber el nivel de hechicería de Furibunda." {
+    assert.equals(29,furibunda.nivelHechiceria())
+  }
+  test "Saber si el hechizo comercial es poderoso" {
+    assert.equals(false,hechizoComercial.esPoderoso())
+  }
+  test "Saber si el espectro maléfico es poderoso" {
+    assert.equals(true,espectroMalefico.esPoderoso())
+  }
+}
+
+object espadaComun inherits Arma(peso = 5){
+  override method diasDesdeCompra() = 500
+}
+describe "Pesos de los Artefactos" {
+    // Modelado de las espadas
+  const espadaVieja = new Arma(fechaCompra = new Date(day=7,month=5,year=2006),peso = 7)
+  const espadaNueva = new Arma(peso = 4)
+  const mascaraOscura = new MascaraOscura(peso = 3,indiceOscuridad = 1,poderMinimo=0) //no deberia ser cero
+  const mascaraClara = new MascaraOscura(peso = 2,indiceOscuridad = 0,poderMinimo=0) //no deberia ser cero
+  const armaduraCotaDeMalla = new Armadura(refuerzo = new CotaDeMalla(),peso = 10)
+  const hechizoTipoComercial = new Hechizo(tipo=hechizoComercial)
+  const armaduraHechizoPar = new Armadura(refuerzo = hechizoTipoComercial,peso = 12)
+  const hechizoTipoMalefico = new Hechizo(tipo=espectroMalefico)
+  const armaduraHechizoImpar = new Armadura(refuerzo = hechizoTipoMalefico,peso = 12)
+  const armaduraSinRefuerzo = new Armadura(refuerzo = ningunRefuerzo,peso = 12)
+  const comercianteIndep = new ComercianteIndependiente(comision=0)
+  const mockHnos = new Comerciante(tipo=comercianteIndep)
+  const merlin = new Personaje(capacidadDeCarga=10,artefactos=#{})
+  const ursula = new Personaje(artefactos=#{mascaraOscura,armaduraCotaDeMalla})
+   
+  test "Saber el peso de la espada vieja" {
+    assert.equals(6,espadaVieja.peso(merlin))
+  }
+  test "Saber el peso de la espada nueva" {
+    assert.equals(4,espadaNueva.peso(merlin))
+  }
+  test "Saber el peso de la espada común" {
+    assert.equals(4.5,espadaComun.peso(merlin))
+  }
+  test "Saber el peso del collar divino" {
+    const collarDivino = new CollarDivino()
+    assert.equals(2.5,collarDivino.peso(merlin))
+  }
+  test "Saber el peso de la máscara oscura" {
+    assert.equals(3,mascaraOscura.peso(merlin)) //deberia ser 4 porque el minimo no deberia ser cero
+  }
+  test "Saber el peso de la máscara clara." {
+    assert.equals(2,mascaraClara.peso(merlin))
+  }
+  test "Saber cuál es el peso total de la armadura con cota de malla." {
+    assert.equals(11,armaduraCotaDeMalla.peso(merlin))
+  }
+  test "Saber cuál es el peso total de la armadura con hechizo par" {
+    assert.equals(14,armaduraHechizoPar.peso(merlin))
+  }
+  test "Saber cuál es el peso total de la armadura con hechizo impar" {
+    assert.equals(13,armaduraHechizoImpar.peso(merlin))
+  }
+  test "Saber cuál es el peso total de la armadura sin ningun tipo de refuerzo" {
+    assert.equals(12,armaduraSinRefuerzo.peso(merlin))
+  }
+  test "Merlin le compra a Mock Hnos. la máscara clara y la oscura (sin que haya eclipse). Saber cuál es el peso total que carga Merlin." {
+    merlin.comprarArtefactoAComerciante(mockHnos, mascaraClara)
+    merlin.comprarArtefactoAComerciante(mockHnos, mascaraOscura)
+    assert.equals(5,merlin.pesoArtefactos())
+  }
+  test "Merlin le quiere comprar a Mock Hnos. la armadura con hechizo par." {
+    assert.throwsExceptionLike(new Exception(message = "Capacidad de carga excedida"), { merlin.comprarArtefactoAComerciante(mockHnos,armaduraHechizoPar) } )
+  }
+  test "Ursula carga con 14 kilos iniciales (11 de la armadura con cota de malla y 3 de la máscara oscura). 
+      Decide desprenderse de la armadura con cota de malla. Saber cuál es el peso total con el que carga Ursula ahora." {
+    ursula.removerArtefacto(armaduraCotaDeMalla)
+    assert.equals(3,ursula.pesoArtefactos())
   }
 
+}
+
+describe "Personajes no controlados" {
+  const navi = new NPC(dificultad=facil)
+  const mascaraClara = new MascaraOscura(peso = 2,indiceOscuridad = 0)
+  const ashleyGraham = new NPC(dificultad=moderado,valorBaseLucha=5,artefactos=#{mascaraClara})
+   
+  test "Conocer la habilidad para la lucha de navi" {
+    assert.equals(1,navi.habilidadLucha())
+  }
+  test "Conocer la habilidad para la lucha de Ashley Graham." {
+    assert.equals(18,ashleyGraham.habilidadLucha())
+  }
+  test "Hacer que Ashley Graham tenga dificultad difícil. Conocer la habilidad para la lucha de Ashley Graham." {
+    ashleyGraham.dificultad(dificil)
+    assert.equals(36,ashleyGraham.habilidadLucha())
+  }
+}
+
+describe "Comercio avanzado de artefactos" {
+  const pastoriza = new Comerciante(tipo=new ComercianteIndependiente(comision=0.09))
+  const prieto = new Comerciante(tipo=new ComercianteRegistrado())
+  const fermepin = new Comerciante(tipo=new ComercianteConImpuesto(importeMinimoNoImponible=5))
+  const armaduraCotaDeMalla = new Armadura(refuerzo = new CotaDeMalla(),peso = 10)
+  const mascaraOscura = new MascaraOscura(peso = 3,indiceOscuridad = 1)
+  const ursula = new Personaje()
+   
+  test "Ursula comienza con 100 monedas. Luego compra la máscara oscura a Pastoriza." {
+    ursula.comprarArtefactoAComerciante(pastoriza, mascaraOscura)
+    assert.equals(89.1,ursula.monedas())
+  }
+  test "Ursula comienza con 100 monedas. Luego compra la máscara oscura a Prieto." {
+    ursula.comprarArtefactoAComerciante(prieto, mascaraOscura)
+    assert.equals(87.9,ursula.monedas())
+  }
+  test "Ursula comienza con 100 monedas. Luego compra la máscara oscura a Fermepin" {
+    ursula.comprarArtefactoAComerciante(fermepin, mascaraOscura)
+    assert.equals(88.25,ursula.monedas())
+  }
+  test "Recategorizar a Pastoriza. Hacer que Úrsula le compre la máscara oscura a Pastoriza." {
+    recategorizador.recategorizar(pastoriza)
+    ursula.comprarArtefactoAComerciante(pastoriza, mascaraOscura)
+    assert.equals(88.2,ursula.monedas())
+  }
+  test "Recategorizar dos veces a Pastoriza. Hacer que Úrsula le compre la máscara oscura a Pastoriza." {
+    recategorizador.recategorizar(pastoriza)
+    recategorizador.recategorizar(pastoriza)
+    ursula.comprarArtefactoAComerciante(pastoriza, mascaraOscura)
+    assert.equals(87.9,ursula.monedas())
+  }
+  test "Recategorizar a Prieto. Hacer que Úrsula le compre la máscara oscura a Prieto." {
+    recategorizador.recategorizar(prieto)
+    ursula.comprarArtefactoAComerciante(prieto, mascaraOscura)
+    assert.equals(88.25,ursula.monedas())
+  }
+  test "Recategorizar a Fermepin. Hacer que Úrsula le compre la máscara oscura a Fermepin." {
+    recategorizador.recategorizar(fermepin)
+    ursula.comprarArtefactoAComerciante(fermepin, mascaraOscura)
+    assert.equals(88.25,ursula.monedas())
+  }
 }
